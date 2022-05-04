@@ -3,6 +3,7 @@ const app = express();
 
 const registerUser = require('./utils/registerUser');
 const pushData = require('./utils/pushData');
+const getData = require('./utils/getData');
 
 const port = 3000;
 const organisationNumber = 1;
@@ -17,7 +18,7 @@ app.get("/", (req, res) => {
 app.post("/register", async (req, res) => {
     const { userId } = req.body;
     if (!userId)
-        res.json({ 
+        return res.json({ 
             success: false,
             msg: "UserId is required!"
          });
@@ -51,6 +52,24 @@ app.post("/push", async (req, res) => {
             organisationName,
             userId,
             data
+        });
+        res.json({
+            success: true,
+            msg
+        })
+    }catch(err){
+        res.json({
+            success: false,
+            msg: err
+        })
+    }
+});
+
+app.post("/get", async (req, res) => {
+    try{
+        const msg = await getData({
+            organisationNumber,
+            organisationName
         });
         res.json({
             success: true,
