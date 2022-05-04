@@ -70,7 +70,6 @@ app.post("/get", async (req, res) => {
     try{
         const msg = await getData({
             organisationNumber,
-            organisationName,
             userId
         });
         res.json({

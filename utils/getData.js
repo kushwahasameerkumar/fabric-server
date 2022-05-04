@@ -11,7 +11,21 @@ const path = require('path');
 const fs = require('fs');
 
 
-async function main({organisationName="A", organisationNumber=1, userId}) {
+const mergeData = (dataA, dataB) => {
+    const map = {};
+    
+    dataA.forEach(d => {
+        map[d.vehicleNo] = {drinkDrive: d.drinkDrive, overSpeeding: d.overSpeeding, trafficLight: d.trafficLight};
+    });
+
+    dataB.forEach(d => {
+        map[d.vehicleNo] = {...map[d.vehicleNo], vehicleAge: d.vehicleAge, vehicleType: d.vehicleType, driverAge: d.driverAge};
+    });
+
+    return Object.values(map);
+}
+
+async function main({organisationNumber=1, userId}) {
     if(!userId)
         return Promise.reject("UserId can't be null");
     try {
@@ -43,13 +57,19 @@ async function main({organisationName="A", organisationNumber=1, userId}) {
         const contract = network.getContract('fabcar');
 
         // addRow - org, data
-        const result = await contract.evaluateTransaction('fetchOrgData', organisationName);
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+        const resultA = await contract.evaluateTransaction('fetchOrgData', "A");
+        console.log(`Transaction has been evaluated, result is: ${resultA.toString()}`);
+
+        const resultB = await contract.evaluateTransaction('fetchOrgData', "B");
+        console.log(`Transaction has been evaluated, result is: ${resultB.toString()}`);
 
         // Disconnect from the gateway.
         await gateway.disconnect();
 
-        return Promise.resolve(JSON.parse(result.toString()));
+        const dataA = JSON.parse(resultA.toString());
+        const dataB = JSON.parse(resultB.toString());
+
+        return Promise.resolve(mergeData(dataA, dataB));
         
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
