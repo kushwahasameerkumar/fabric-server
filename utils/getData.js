@@ -25,7 +25,7 @@ const mergeData = (dataA, dataB) => {
     return Object.values(map);
 }
 
-async function main({organisationNumber=1, userId}) {
+async function main({organisationNumber=1, organisationName="A", userId}) {
     if(!userId)
         return Promise.reject("UserId can't be null");
     try {
@@ -34,7 +34,7 @@ async function main({organisationNumber=1, userId}) {
         const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
 
         // Create a new file system based wallet for managing identities.
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(process.cwd(), 'wallet'+organisationName);
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
