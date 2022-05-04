@@ -29,7 +29,7 @@ const mergeData = (dataA, dataB) => {
 
 const areAllAttributesPresent = (map) => {
     Object.keys(map).forEach(key => {
-        if(map[key] === undefined || map[key] === null);
+        if(map[key] === undefined || map[key] === null)
             return false;
     })
     return true;
