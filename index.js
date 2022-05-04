@@ -66,10 +66,12 @@ app.post("/push", async (req, res) => {
 });
 
 app.post("/get", async (req, res) => {
+    const {userId} = req.body;
     try{
         const msg = await getData({
             organisationNumber,
-            organisationName
+            organisationName,
+            userId
         });
         res.json({
             success: true,

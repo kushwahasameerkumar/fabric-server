@@ -11,12 +11,9 @@ const path = require('path');
 const fs = require('fs');
 
 
-async function main({organisationName="A", organisationNumber=1}) {
-<<<<<<< HEAD
-=======
-    if(!userId || !data)
-        return Promise.reject("UserId or data can't be null");
->>>>>>> c50bc37f1c0c526dae38e144a107f2424fff5ac4
+async function main({organisationName="A", organisationNumber=1, userId}) {
+    if(!userId)
+        return Promise.reject("UserId can't be null");
     try {
         // load the network configuration
         const ccpPath = path.resolve(__dirname, '..', '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org' + organisationNumber + '.example.com', 'connection-org' + organisationNumber + '.json');
