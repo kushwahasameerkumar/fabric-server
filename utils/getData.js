@@ -13,7 +13,6 @@ const fs = require('fs');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 
-
 const mergeData = (dataA, dataB) => {
     const map = {};
     
@@ -28,6 +27,13 @@ const mergeData = (dataA, dataB) => {
     return Object.values(map);
 }
 
+const areAllAttributesPresent = (map) => {
+    Object.keys(map).forEach(key => {
+        if(data[key] === undefined || data[key] === null);
+            return false;
+    })
+    return true;
+}
 const prepareDataset = (dataset) => {
     const map = {
         drinkDrive: [],
@@ -40,7 +46,7 @@ const prepareDataset = (dataset) => {
 
     dataset.forEach(d => {
         //if all attributes are present for a vehicle, ignore otherwise
-        if(Object.keys(d).length == 6){
+        if(areAllAttributesPresent(d)){
             map.drinkDrive.push(d.drinkDrive);
             map.overSpeeding.push(d.overSpeeding);
             map.trafficLight.push(d.trafficLight);
