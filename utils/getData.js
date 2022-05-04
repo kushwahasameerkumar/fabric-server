@@ -49,7 +49,7 @@ async function main({organisationName="A", organisationNumber=1, userId}) {
         // Disconnect from the gateway.
         await gateway.disconnect();
 
-        return Promise.resolve(result);
+        return Promise.resolve(JSON.parse(result.toString()));
         
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
