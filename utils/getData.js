@@ -10,6 +10,8 @@ const { Gateway, Wallets } = require('fabric-network');
 const path = require('path');
 const fs = require('fs');
 
+const fetch = require('node-fetch');
+
 
 const mergeData = (dataA, dataB) => {
     const map = {};
@@ -23,6 +25,31 @@ const mergeData = (dataA, dataB) => {
     });
 
     return Object.values(map);
+}
+
+const prepareDataset = (dataset) => {
+    const map = {
+        drinkDrive: [],
+        overSpeeding: [],
+        trafficLight: [],
+        vehicleAge: [],
+        vehicleType: [],
+        driverAge: []
+    }
+
+    dataset.forEach(d => {
+        //if all attributes are present for a vehicle, ignore otherwise
+        if(Object.keys(d).length == 6){
+            map.drinkDrive.push(d.drinkDrive);
+            map.overSpeeding.push(d.overSpeeding);
+            map.trafficLight.push(d.trafficLight);
+            map.vehicleAge.push(d.vehicleAge);
+            map.vehicleType.push(d.vehicleType);
+            map.driverAge.push(d.driverAge);
+        }
+    });
+
+    return map;
 }
 
 async function main({organisationNumber=1, organisationName="A", userId}) {
@@ -69,12 +96,36 @@ async function main({organisationNumber=1, organisationName="A", userId}) {
         const dataA = JSON.parse(resultA.toString());
         const dataB = JSON.parse(resultB.toString());
 
-        return Promise.resolve(mergeData(dataA, dataB));
+        const dataset = prepareDataset(mergeData(dataA, dataB));
+
+        console.log("Sending training dataset")
+        await sendTrainingData(dataset);
+
+        console.log("Training model")
+        const trainingResponse = await trainModel();
+
+        return Promise.resolve({trainingResponse,dataset});
         
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
         return Promise.reject(`Failed to evaluate transaction: ${error}`);
     }
 }
+
+
+async function sendTrainingData(dataset){
+    return fetch("https://svm-model-trainer--hyp3r5pace.repl.co/dataset", {
+        method: 'post',
+        body: JSON.stringify(dataset),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+}
+
+async function trainModel() {
+    return fetch("https://svm-model-trainer--hyp3r5pace.repl.co/train");
+}
+
 
 module.exports = main;
