@@ -11,7 +11,7 @@ const path = require('path');
 const fs = require('fs');
 
 
-async function main({organisationName="A", organisationNumber=1, userId, data}) {
+async function main({organisationName="A", organisationNumber=1}) {
     if(!userId || !data)
         return Promise.reject("UserId or data can't be null");
     try {
@@ -43,13 +43,13 @@ async function main({organisationName="A", organisationNumber=1, userId, data}) 
         const contract = network.getContract('fabcar');
 
         // addRow - org, data
-        await contract.submitTransaction('addRow', organisationName, JSON.stringify({...data, vehicleNo: userId}));
-        console.log('Transaction has been submitted');
+        const result = await contract.evaluateTransaction('fetchOrgData', organisationName);
+        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
         // Disconnect from the gateway.
         await gateway.disconnect();
 
-        return Promise.resolve('Transaction has been submitted');
+        return Promise.resolve(result);
         
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
