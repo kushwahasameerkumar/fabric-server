@@ -11,7 +11,7 @@ const FabricCAServices = require('fabric-ca-client');
 const fs = require('fs');
 const path = require('path');
 
-async function main({ organisationNumber = 1, userId }) {
+async function main({ organisationNumber = 1, organisationName = "A", userId }) {
     if (!userId)
         return Promise.reject("UserId can't be null!")
 
@@ -37,16 +37,16 @@ async function main({ organisationNumber = 1, userId }) {
         }
 
         // Check to see if we've already enrolled the admin user.
-        const adminIdentity = await wallet.get('admin');
+        const adminIdentity = await wallet.get('admin'+organisationName);
         if (!adminIdentity) {
-            console.log('An identity for the admin user "admin" does not exist in the wallet');
-            console.log('Run the enrollAdmin.js application before retrying');
+            console.log('An identity for the admin user "admin'+organisationName+'" does not exist in the wallet');
+            console.log('Run the enrollAdmin'+organisationName+'.js application before retrying');
             return;
         }
 
         // build a user object for authenticating with the CA
         const provider = wallet.getProviderRegistry().getProvider(adminIdentity.type);
-        const adminUser = await provider.getUserContext(adminIdentity, 'admin');
+        const adminUser = await provider.getUserContext(adminIdentity, 'admin'+organisationName);
 
         // Register the user, enroll the user, and import the new identity into the wallet.
         const secret = await ca.register({

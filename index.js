@@ -25,6 +25,7 @@ app.post("/register", async (req, res) => {
     try{
         const msg = await registerUser({
             organisationNumber,
+            organisationName,
             userId
         });
         res.json({
