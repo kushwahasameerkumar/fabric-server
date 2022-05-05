@@ -10,25 +10,25 @@ const { Gateway, Wallets } = require('fabric-network');
 const path = require('path');
 const fs = require('fs');
 
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 
 const mergeData = (dataA, dataB) => {
     const map = {};
-    
+
     dataA.forEach(d => {
-        map[d.vehicleNo] = {drinkDrive: d.drinkDrive, overSpeeding: d.overSpeeding, trafficLight: d.trafficLight};
+        map[d.vehicleNo] = { drinkDrive: d.drinkDrive, overSpeeding: d.overSpeeding, trafficLight: d.trafficLight, accident: d.accident };
     });
 
     dataB.forEach(d => {
-        map[d.vehicleNo] = {...map[d.vehicleNo], vehicleAge: d.vehicleAge, vehicleType: d.vehicleType, driverAge: d.driverAge};
+        map[d.vehicleNo] = { ...map[d.vehicleNo], vehicleAge: d.vehicleAge, vehicleType: d.vehicleType, driverAge: d.driverAge };
     });
 
     return Object.values(map);
 }
 
 const areAllAttributesPresent = (map) => {
-    if(Object.values(map).includes(undefined))
+    if (Object.values(map).includes(undefined))
         return false;
     return true;
 }
@@ -45,7 +45,7 @@ const prepareDataset = (dataset) => {
 
     dataset.forEach(d => {
         //if all attributes are present for a vehicle, ignore otherwise
-        if(areAllAttributesPresent(d)){
+        if (areAllAttributesPresent(d)) {
             map.drinkDrive.push(d.drinkDrive);
             map.overSpeeding.push(d.overSpeeding);
             map.trafficLight.push(d.trafficLight);
@@ -59,8 +59,8 @@ const prepareDataset = (dataset) => {
     return map;
 }
 
-async function main({organisationNumber=1, organisationName="A", userId}) {
-    if(!userId)
+async function main({ organisationNumber = 1, organisationName = "A", userId }) {
+    if (!userId)
         return Promise.reject("UserId can't be null");
     try {
         // load the network configuration
@@ -68,16 +68,16 @@ async function main({organisationNumber=1, organisationName="A", userId}) {
         const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
 
         // Create a new file system based wallet for managing identities.
-        const walletPath = path.join(process.cwd(), 'wallet'+organisationName);
+        const walletPath = path.join(process.cwd(), 'wallet' + organisationName);
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
         // Check to see if we've already enrolled the user.
         const identity = await wallet.get(userId);
         if (!identity) {
-            console.log('An identity for the user "'+userId+'" does not exist in the wallet');
+            console.log('An identity for the user "' + userId + '" does not exist in the wallet');
             console.log('Register user on the application before retrying');
-            return Promise.reject('An identity for the user "'+userId+'" does not exist in the wallet');
+            return Promise.reject('An identity for the user "' + userId + '" does not exist in the wallet');
         }
 
         // Create a new gateway for connecting to our peer node.
@@ -111,8 +111,8 @@ async function main({organisationNumber=1, organisationName="A", userId}) {
         console.log("Training model")
         const trainingResponse = await trainModel();
 
-        return Promise.resolve({trainingResponse,dataset});
-        
+        return Promise.resolve({ trainingResponse, dataset });
+
     } catch (error) {
         console.error(`Failed to evaluate transaction: ${error}`);
         return Promise.reject(`Failed to evaluate transaction: ${error}`);
@@ -120,7 +120,7 @@ async function main({organisationNumber=1, organisationName="A", userId}) {
 }
 
 
-async function sendTrainingData(dataset){
+async function sendTrainingData(dataset) {
     return fetch("https://svm-model-trainer--hyp3r5pace.repl.co/dataset", {
         method: 'post',
         body: JSON.stringify(dataset),
