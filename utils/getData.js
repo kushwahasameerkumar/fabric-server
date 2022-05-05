@@ -109,7 +109,8 @@ async function main({ organisationNumber = 1, organisationName = "A", userId }) 
         await sendTrainingData(dataset);
 
         console.log("Training model")
-        const trainingResponse = await trainModel();
+        let trainingResponse = await trainModel();
+        trainingResponse = await trainingResponse.json();
 
         return Promise.resolve({ trainingResponse, dataset });
 
