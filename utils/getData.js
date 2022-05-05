@@ -39,7 +39,8 @@ const prepareDataset = (dataset) => {
         trafficLight: [],
         vehicleAge: [],
         vehicleType: [],
-        driverAge: []
+        driverAge: [],
+        accident: []
     }
 
     dataset.forEach(d => {
@@ -51,6 +52,7 @@ const prepareDataset = (dataset) => {
             map.vehicleAge.push(d.vehicleAge);
             map.vehicleType.push(d.vehicleType);
             map.driverAge.push(d.driverAge);
+            map.accident.push(d.accident);
         }
     });
 
