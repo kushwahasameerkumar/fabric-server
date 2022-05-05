@@ -4,10 +4,12 @@ const app = express();
 const registerUser = require('./utils/registerUser');
 const pushData = require('./utils/pushData');
 const getData = require('./utils/getData');
+const encryptData = require("./utils/encryptData");
 
 const port = 3000;
 const organisationNumber = 1;
 const organisationName = "A";
+const key = 5;
 
 app.use(express.json());
 
@@ -52,7 +54,7 @@ app.post("/push", async (req, res) => {
             organisationNumber,
             organisationName,
             userId,
-            data
+            data: encryptData(data, key)
         });
         res.json({
             success: true,
