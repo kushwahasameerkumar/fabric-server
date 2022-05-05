@@ -92,10 +92,10 @@ async function main({ organisationNumber = 1, organisationName = "A", userId }) 
 
         // addRow - org, data
         const resultA = await contract.evaluateTransaction('fetchOrgData', "A");
-        console.log(`Transaction has been evaluated, result is: ${resultA.toString()}`);
+        // console.log(`Transaction has been evaluated, result is: ${resultA.toString()}`);
 
         const resultB = await contract.evaluateTransaction('fetchOrgData', "B");
-        console.log(`Transaction has been evaluated, result is: ${resultB.toString()}`);
+        // console.log(`Transaction has been evaluated, result is: ${resultB.toString()}`);
 
         // Disconnect from the gateway.
         await gateway.disconnect();
